@@ -1,0 +1,114 @@
+{% extends 'plants/base.html' %}
+
+{% block title %}{{ plant.name }} - GreenBox{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            {% if plant.image %}
+                <img src="{{ plant.image.url }}" class="card-img-top" alt="{{ plant.name }}">
+            {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <i class="bi bi-plant text-success" style="font-size: 5rem;"></i>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h1 class="card-title">{{ plant.name }}</h1>
+                {% if plant.scientific_name %}
+                    <p class="text-muted">{{ plant.scientific_name }}</p>
+                {% endif %}
+                <div class="mb-4">
+                    <h5>描述</h5>
+                    <p>{{ plant.description }}</p>
+                </div>
+                <div class="mb-4">
+                    <h5>养护说明</h5>
+                    <p>{{ plant.care_instructions }}</p>
+                </div>
+                <div class="text-muted">
+                    <small>创建者：{{ plant.creator.username }} | 创建时间：{{ plant.created_at|date:"Y-m-d H:i" }}</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">评论</h5>
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'plants:add_comment' plant.pk %}" class="mb-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <textarea name="content" class="form-control" rows="3" placeholder="写下您的评论..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">发表评论</button>
+                    </form>
+                {% else %}
+                    <p class="text-muted">请<a href="{% url 'admin:login' %}">登录</a>后发表评论</p>
+                {% endif %}
+
+                {% for comment in comments %}
+                    <div class="border-bottom py-3">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="mb-1">{{ comment.user.username }}</h6>
+                            <small class="text-muted">{{ comment.created_at|date:"Y-m-d H:i" }}</small>
+                        </div>
+                        <p class="mb-1">{{ comment.content }}</p>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">暂无评论</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        {% if user.is_authenticated %}
+            {% if user_plant %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">我的植物</h5>
+                        <p><strong>昵称：</strong>{{ user_plant.nickname|default:"未设置" }}</p>
+                        <p><strong>获得日期：</strong>{{ user_plant.acquired_date }}</p>
+                        <p><strong>最后浇水：</strong>{{ user_plant.last_watered|default:"未记录" }}</p>
+                        {% if user_plant.notes %}
+                            <p><strong>笔记：</strong>{{ user_plant.notes }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">添加到我收藏</h5>
+                        <form method="post" action="{% url 'plants:add_user_plant' plant.pk %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="nickname" class="form-label">昵称（可选）</label>
+                                <input type="text" class="form-control" id="nickname" name="nickname">
+                            </div>
+                            <div class="mb-3">
+                                <label for="acquired_date" class="form-label">获得日期</label>
+                                <input type="date" class="form-control" id="acquired_date" name="acquired_date" required>
+                            </div>
+                            <button type="submit" class="btn btn-success">添加到收藏</button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">登录后更多功能</h5>
+                    <p>登录后您可以：</p>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check-circle"></i> 收藏植物</li>
+                        <li><i class="bi bi-check-circle"></i> 记录养护过程</li>
+                        <li><i class="bi bi-check-circle"></i> 发表评论</li>
+                    </ul>
+                    <a href="{% url 'admin:login' %}" class="btn btn-success">立即登录</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

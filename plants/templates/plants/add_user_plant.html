@@ -1,0 +1,30 @@
+{% extends 'plants/base.html' %}
+
+{% block title %}添加植物 - GreenBox{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">添加 {{ plant.name }} 到我的收藏</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="nickname" class="form-label">昵称（可选）</label>
+                        <input type="text" class="form-control" id="nickname" name="nickname" placeholder="给我的植物起个昵称">
+                    </div>
+                    <div class="mb-3">
+                        <label for="acquired_date" class="form-label">获得日期</label>
+                        <input type="date" class="form-control" id="acquired_date" name="acquired_date" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">添加到收藏</button>
+                        <a href="{% url 'plants:plant_detail' plant.pk %}" class="btn btn-outline-secondary">返回</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,73 @@
+{% extends 'plants/base.html' %}
+
+{% block title %}植物图鉴 - GreenBox{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>植物图鉴</h1>
+        <form class="d-flex" method="get">
+            <input class="form-control me-2" type="search" name="search" placeholder="搜索植物..." value="{{ request.GET.search }}">
+            <button class="btn btn-outline-success" type="submit">搜索</button>
+        </form>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for plant in plants %}
+    <div class="col">
+        <div class="card h-100">
+            {% if plant.image %}
+                <img src="{{ plant.image.url }}" class="card-img-top" alt="{{ plant.name }}">
+            {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="bi bi-plant text-success" style="font-size: 3rem;"></i>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ plant.name }}</h5>
+                {% if plant.scientific_name %}
+                    <p class="card-text text-muted">{{ plant.scientific_name }}</p>
+                {% endif %}
+                <p class="card-text">{{ plant.description|truncatewords:30 }}</p>
+                <a href="{% url 'plants:plant_detail' plant.pk %}" class="btn btn-outline-success">查看详情</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p class="text-center">暂无植物信息</p>
+    </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">上一页</a>
+            </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">下一页</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %} 

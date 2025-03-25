@@ -1,0 +1,65 @@
+{% extends 'plants/base.html' %}
+
+{% block title %}GreenBox - 首页{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="mb-4">欢迎来到 GreenBox</h1>
+        <p class="lead">在这里，您可以：</p>
+        <ul class="list-unstyled">
+            <li><i class="bi bi-plant"></i> 浏览植物图鉴</li>
+            <li><i class="bi bi-journal-text"></i> 学习植物养护知识</li>
+            <li><i class="bi bi-chat-dots"></i> 与其他植物爱好者交流</li>
+            <li><i class="bi bi-calendar-check"></i> 记录您的植物生长历程</li>
+        </ul>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">快速导航</h5>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'plants:plant_list' %}" class="btn btn-success">浏览植物图鉴</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'admin:index' %}" class="btn btn-outline-success">进入管理后台</a>
+                    {% else %}
+                        <a href="{% url 'admin:login' %}" class="btn btn-outline-success">登录</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <h2 class="mb-4">最新添加的植物</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for plant in recent_plants %}
+            <div class="col">
+                <div class="card h-100">
+                    {% if plant.image %}
+                        <img src="{{ plant.image.url }}" class="card-img-top" alt="{{ plant.name }}">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="bi bi-plant text-success" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ plant.name }}</h5>
+                        {% if plant.scientific_name %}
+                            <p class="card-text text-muted">{{ plant.scientific_name }}</p>
+                        {% endif %}
+                        <a href="{% url 'plants:plant_detail' plant.pk %}" class="btn btn-outline-success">查看详情</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-center">暂无植物信息</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 
