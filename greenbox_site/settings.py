@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-t5v+hvhywag!y=f4@-l&#$i15+*qwdl8m*s1zgp3l8*3x=!-5+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['boxenno.vip', 'www.boxenno.vip']
+ALLOWED_HOSTS = ['boxenno.vip', 'www.boxenno.vip', '127.0.0.1', 'localhost']
 
 CSRF_TRUSTED_ORIGINS = ['https://boxenno.vip', 'https://www.boxenno.vip']
 
